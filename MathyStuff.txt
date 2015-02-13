@@ -1,0 +1,48 @@
+##Constants:
+# 1) C_m = 0.01e-6 (F/cm**2) --> * (1/100)**2 = 1e-4 offset with 1e+4 --> double check, should be C_m = 0.01e-2 (F/m**2)
+# 2) E_Na = 55.17e-3 (V)
+# 3) E_K = -72.14e-3 (V)
+# 4) E_l = -49.42e-3 (V)
+# 5) g_Na = 12 (S/m**2)     S = siemens, unit of conductance
+# 6) g_K = 3.6 (S/m**2)
+# 7) g_l = 0.03 (S/m**2)
+
+## Input (independent) variables:
+# 1) [v] membrane potential (from voltage clamp)
+# 2) [t] time
+
+## Calculated (passed, dependent) secondary input variables:
+# 1) alpha_n
+# 2) beta_n
+# 3) alpha_m
+# 4) beta_m
+# 5) alpha_h
+# 6) beta_h
+
+## DE-based secondary target variables:
+# 1) dn/dt = (alpha_n * [v] * (1-n)) - (beta_n * [v] * n)
+# 2) dm/dt = (alpha_m * [v] * (1-m)) - (beta_m * [v] * m)
+# 3) dh/dt = (alpha_h * [v] * (1-h)) - (beta_h * [v] * h)
+## I don't need to figure out how to solve these, but I will need [n][m][h] as passed inputs to graph them.
+
+## DE-based primary target variable:
+#
+# dv/dt = (1/C_m) * (I - g_Na * m**3 * h * ([v] - E_Na) - g_K * n**4 * ([v] - E_K) - g_l * ([v] - E_l))
+
+
+### Where does I come from? How do I solve for it? Will Mitch pass it in?
+# From math paper:
+# I_ion = (gbar_Na * m**3 * h * (V_m - E_Na) - gbar_K * n**4 * (V_m - E_K) - gbar_l * (V_m - E_l))
+
+### But now I need gbar_NA,K,l and V_m. That's four variables that I don't have equations for.
+
+
+# Here's some more stuff:
+# (Apparently, this one IS the Hodgkins-Huxley model)
+# C_m * dV_m/dt + I_ion = I_ext
+## Where V_m is the intracellular potential, I_ion is the net ionic current flowing across membrane (I_Na, I_K, etc), and I_ext is the externally applied current
+
+## So, looking at that, maybe we should actually get C_m, V_m, and each component of I_ion, then vary I_ext?
+# dp_i/dt = (alpha_i * V * (1-p_i) - beta_i * V * p_i)      Where p_i can be replace by (n, m, or h)
+# G_i = gbar_i * PI_function( p_i )
+
